@@ -1,3 +1,46 @@
-# Puppet bearwall configuration module.
+# Puppet Bearwall Module
 
-A module that can install bearwall
+A module that can install bearwall (http://www.bearwall.org).
+
+## Usage
+
+The bearwall module is configured by defining policies for each interface under
+the `interface` parameter.
+
+An example configuration for lo and eth0 would look like:
+
+    ---
+    interfaces:
+      lo:
+        policies:
+        - policy in ACCEPT
+        - policy out ACCEPT
+        - polite_reject forward-in
+        - polite_reject forward-out
+        if_features:
+        - rp_filter 1
+        - accept_redirects 0
+        - accept_source_route 0
+        - bootp_relay 0
+        - accept_ra 0
+        - forwarding 0
+        - log_martians 0
+        - send_redirects 0
+      eth0:
+        policies:
+        - policy in icmp-trust
+        - policy in tcp-strict
+        - policy in udp-strict
+        - policy in ACCEPT --protocol tcp --destination-port ssh
+        - policy out ACCEPT
+        if_features:
+        - disable_ipv6 0
+        - autoconf 1
+        - rp_filter 1
+        - accept_redirects 0
+        - accept_source_route 0
+        - bootp_relay 0
+        - accept_ra 1
+        - forwarding 0
+        - log_martians 0
+        - send_redirects 0
