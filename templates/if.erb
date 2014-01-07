@@ -3,13 +3,13 @@
 on_startup
 
 <%- if !@policies.empty? -%>
-<%- @policies.sort.each do |policy| -%>
+<%- @policies.each do |policy| -%>
 <%= policy %>
 <%- end -%>
 <%- end -%>
 
 <%- if !@if_features.empty? -%>
-<%- @if_features.sort.each do |if_feature| -%>
+<%- @if_features.each do |if_feature| -%>
 if_feature <%= if_feature %>
 <%- end -%>
 <%- end -%>
