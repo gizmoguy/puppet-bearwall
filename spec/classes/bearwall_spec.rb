@@ -6,12 +6,16 @@ describe 'bearwall' do
     let(:facts) {{ :osfamily => 'Unsupported' }}
 
     it 'it fails' do
-      expect { subject }.to raise_error(/not supported on an Unsupported/)
+      expect { should contain_class('bearwall') }.to raise_error(/not supported on an Unsupported/)
     end
   end
 
   context 'on Debian' do
-    let(:facts) {{ :osfamily => 'Debian', :lsbdistcodename => 'wheezy' }}
+    let(:facts) {{
+      :osfamily => 'Debian',
+      :lsbdistid => 'Debian',
+      :lsbdistcodename => 'wheezy'
+    }}
 
     it 'includes bearwall::repo::apt' do
       should contain_class('bearwall::repo::apt')
@@ -30,6 +34,7 @@ describe 'bearwall' do
     context "on #{distro}" do
       let(:facts) {{
         :osfamily => distro,
+        :lsbdistid => distro,
         :lsbdistcodename => 'squeeze',
       }}
 
@@ -48,22 +53,22 @@ describe 'bearwall' do
           :interfaces => {
             'eth0' => {
               'policies' => [
-                'rule one',
-                'rule two',
+                'policy in ACCEPT --protocol tcp --destination-port ssh',
+                'policy out ACCEPT'
               ],
               'if_features' => [
-                'feature 0',
-                'feature 1',
+                'disable_ipv6 0',
+                'forwarding 1',
               ]
             },
             'lo' => {
               'policies' => [
-                'rule one',
-                'rule two',
+                'policy in ACCEPT',
+                'policy out ACCEPT',
               ],
               'if_features' => [
-                'feature 0',
-                'feature 1',
+                'forwarding 0',
+                'accept_ra 0',
               ]
             },
           }
@@ -74,10 +79,10 @@ describe 'bearwall' do
           .with_path('/etc/bearwall/interfaces.d/eth0.if') \
           .with_ensure('file') \
           .with_content(/on_startup/) \
-          .with_content(/policy rule one/) \
-          .with_content(/policy rule two/) \
-          .with_content(/if_feature feature 0/) \
-          .with_content(/if_feature feature 1/)
+          .with_content(/policy in ACCEPT.*ssh/) \
+          .with_content(/policy out ACCEPT/) \
+          .with_content(/if_feature disable_ipv6 0/) \
+          .with_content(/if_feature forwarding 1/)
         end
 
         it 'should configure lo.if' do
@@ -85,10 +90,10 @@ describe 'bearwall' do
           .with_path('/etc/bearwall/interfaces.d/lo.if') \
           .with_ensure('file') \
           .with_content(/on_startup/) \
-          .with_content(/policy rule one/) \
-          .with_content(/policy rule two/) \
-          .with_content(/if_feature feature 0/) \
-          .with_content(/if_feature feature 1/)
+          .with_content(/policy in ACCEPT/) \
+          .with_content(/policy out ACCEPT/) \
+          .with_content(/if_feature forwarding 0/) \
+          .with_content(/if_feature accept_ra 0/)
         end
       end
     end
