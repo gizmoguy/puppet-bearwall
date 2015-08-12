@@ -6,7 +6,7 @@ describe 'bearwall' do
     let(:facts) {{ :osfamily => 'Unsupported' }}
 
     it 'it fails' do
-      expect { should contain_class('bearwall') }.to raise_error(/not supported on an Unsupported/)
+      expect { subject.call }.to raise_error(/not supported on an Unsupported/)
     end
   end
 
