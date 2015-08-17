@@ -26,7 +26,7 @@ describe 'bearwall' do
       'release'     => 'wheezy',
       'repos'       => 'main',
       'include_src' => false,
-      'key'         => 'A2D0D6AE'
+      'key'         => '6ABA09963E518866C29FA6C10F0921E4A2D0D6AE'
     )}
   end
 
